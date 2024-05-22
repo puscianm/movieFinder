@@ -63,7 +63,10 @@ def getTrendingMovies():
 
     return processRequest(url, headers=headers, params=params)
 
-def discover():
+def discover(minimum_votes : int,
+                  minimum_rating : int,
+                  later_than : str,
+                  earlier_than : str) -> pd.DataFrame:
     """
     Uses tbdb database for discovering new movies.
     """
@@ -75,7 +78,11 @@ def discover():
         "include_video": "false",
         "language": "en-US",
         "page": "1",
-        "sort_by": "vote_average.desc, vote_count.desc"
+        "sort_by": "vote_average.desc, vote_count.desc",
+        "release_date.lte" : earlier_than,
+        "release_date.gte" : later_than,
+        "vote_count.gte" : minimum_votes,
+        "vote_average.gte" : minimum_rating
     }
 
     return processRequest(url=tmdbDiscoverURL, headers=headers, params=params)
@@ -88,4 +95,11 @@ if __name__ == "__main__":
     #tmdb_database = pd.concat([tmdb_database, getPopularMovies("en-US", tmdb_latest_page + 1)],
     #                          axis="rows")
     #tmdb_database.to_parquet("tmdb_database.parquet")
-    getTrendingMovies().to_parquet("tmdb_trending.parquet")
+    
+    #getTrendingMovies().to_parquet("tmdb_trending.parquet")
+
+    print(
+        discover(minimum_votes= 8000,
+        minimum_rating=8.0,
+        later_than="2024-01-01",
+        earlier_than="2024-02-01"))
