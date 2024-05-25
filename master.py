@@ -4,6 +4,7 @@ sys.path.append("../APIKEYS")
 import apiKey
 
 import json
+import time
 import requests
 import pandas as pd
 from datetime import datetime
@@ -66,18 +67,18 @@ def getTrendingMovies():
 def discover(minimum_votes : int,
                   minimum_rating : int,
                   later_than : str,
-                  earlier_than : str) -> pd.DataFrame:
+                  earlier_than : str,
+                  page : int) -> pd.DataFrame:
     """
     Uses tbdb database for discovering new movies.
     """
-    warnings.warn("This function is not yet implemented. Use getPopularMovies() for now")
     tmdbDiscoverURL = "https://api.themoviedb.org/3/discover/movie"
 
     params = {
         "include_adult": "false",
         "include_video": "false",
         "language": "en-US",
-        "page": "1",
+        "page": page,
         "sort_by": "vote_average.desc, vote_count.desc",
         "release_date.lte" : earlier_than,
         "release_date.gte" : later_than,
@@ -89,17 +90,30 @@ def discover(minimum_votes : int,
 
 
 if __name__ == "__main__":
-    #tmdb_database = pd.read_parquet("tmdb_database.parquet")
-    #tmdb_latest_page = tmdb_database['page'].max()
+
+    #discover(minimum_votes= 300,
+    #                            minimum_rating=4.0,
+    #                            later_than="1950-01-01",
+    #                            earlier_than="2024-02-01", page=1).to_parquet("tmdb_discover.parquet")
     #
-    #tmdb_database = pd.concat([tmdb_database, getPopularMovies("en-US", tmdb_latest_page + 1)],
-    #                          axis="rows")
-    #tmdb_database.to_parquet("tmdb_database.parquet")
+    #exit(0)
+    tmdb_discover = pd.read_parquet("tmdb_discover.parquet")
     
     #getTrendingMovies().to_parquet("tmdb_trending.parquet")
-
-    print(
-        discover(minimum_votes= 8000,
-        minimum_rating=8.0,
-        later_than="2024-01-01",
-        earlier_than="2024-02-01"))
+    for i in range(30*100):
+        print(f"---------------PROCESSING {i} PAGE---------------")
+        if tmdb_discover.shape[0] < 5:
+            tmdb_latest_page = 1
+        else:
+            tmdb_latest_page = tmdb_discover['page'].max() + 1
+        
+        tmdb_discover_new = discover(minimum_votes= 300,
+                                minimum_rating=4.0,
+                                later_than="1950-01-01",
+                                earlier_than="2024-02-01",
+                                page=tmdb_latest_page)
+        tmdb_discover = pd.concat([tmdb_discover, tmdb_discover_new])
+        time.sleep(0.03)
+        tmdb_latest_page = tmdb_latest_page + 1
+        
+    tmdb_discover.to_parquet("tmdb_discover.parquet")
