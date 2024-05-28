@@ -109,7 +109,7 @@ class throttleLimiter():
         headers
             header of request in requests.get() function
         """
-        
+
         time_diff = (datetime.now() - self.sliding_window[-1])
 
         if time_diff.seconds == 0:
@@ -122,33 +122,37 @@ class throttleLimiter():
         self.sliding_window.pop()
 
         return processRequest(url=self.url, headers=headers, params=params)
+    
+    def multipleDiscoverRequests(self, numberOfRequests : int, page_start : int, minimum_votes : int, minimum_rating : int):
+        """
+        Makes multiple requests to discover endpoint.
+
+        Args
+        numberOfRequests
+
+        page_start
+
+        minimum_votes
+
+        minimum_rating
+        """
+        tmdb_latest_page = page_start
+
+        for i in range(numberOfRequests):
+            print(f"---------------PROCESSING {i} PAGE---------------")
+            tmdb_discover_new = discover(minimum_votes= minimum_votes,
+                                    minimum_rating=minimum_rating,
+                                    later_than="1950-01-01",
+                                    earlier_than="2024-02-01",
+                                    page=tmdb_latest_page)
+            tmdb_discover = pd.concat([tmdb_discover, tmdb_discover_new])
+            tmdb_latest_page = tmdb_latest_page + 1
 
 
 if __name__ == "__main__":
 
-    #discover(minimum_votes= 300,
-    #                            minimum_rating=4.0,
-    #                            later_than="1950-01-01",
-    #                            earlier_than="2024-02-01", page=1).to_parquet("tmdb_discover.parquet")
-    #
-    #exit(0)
     tmdb_discover = pd.read_parquet("tmdb_discover.parquet")
-    
-    #getTrendingMovies().to_parquet("tmdb_trending.parquet")
-    for i in range(30*100):
-        print(f"---------------PROCESSING {i} PAGE---------------")
-        if tmdb_discover.shape[0] < 5:
-            tmdb_latest_page = 1
-        else:
-            tmdb_latest_page = tmdb_discover['page'].max() + 1
-        
-        tmdb_discover_new = discover(minimum_votes= 300,
-                                minimum_rating=4.0,
-                                later_than="1950-01-01",
-                                earlier_than="2024-02-01",
-                                page=tmdb_latest_page)
-        tmdb_discover = pd.concat([tmdb_discover, tmdb_discover_new])
-        time.sleep(0.03)
-        tmdb_latest_page = tmdb_latest_page + 1
+
+    result = multipleDiscoverRequests(...)
         
     tmdb_discover.to_parquet("tmdb_discover.parquet")
