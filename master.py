@@ -88,6 +88,41 @@ def discover(minimum_votes : int,
 
     return processRequest(url=tmdbDiscoverURL, headers=headers, params=params)
 
+class throttleLimiter():
+    """
+    This class provides an object useful for making API requests with 
+    maximum number of requests per second.
+    """
+
+    def __init__(self, url : str, max_requests_per_sec : int):
+        self.url = url
+        self.sliding_window = [datetime.now() for i in range(max_requests_per_sec)]
+
+    def makeRequest(self, params : dict, headers : dict = None):
+        """
+        This function checks whether max throttle is reached and than makes a request
+        (or waits with request so that the throttle is not exceeded).
+
+        Args
+        params
+            body of request in requests.get() function
+        headers
+            header of request in requests.get() function
+        """
+        
+        time_diff = (datetime.now() - self.sliding_window[-1])
+
+        if time_diff.seconds == 0:
+            time_to_wait = 1- time_diff.microseconds/100000
+            print(f"Throttle limit reached. Waiting {time_to_wait} seconds for resuming.")
+            time.sleep(time_to_wait)
+
+        #updating sliding window
+        self.sliding_window.insert(0, datetime.now())
+        self.sliding_window.pop()
+
+        return processRequest(url=self.url, headers=headers, params=params)
+
 
 if __name__ == "__main__":
 
