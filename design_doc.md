@@ -1,15 +1,21 @@
-# Design document
+# 📑Design document
 
 In this document we summarize how we plan to execute movieFinder project.
 
-# Overview
+# 🔍Overview
 
-# Motivation
+# ⚡Motivation
 
-# Succes metrics
+# 🧮Succes metrics
 
-# Requirements & Constraints
 
-# Methodology
 
-# Implementation
+# 🚧Requirements & Constraints
+
+# 🗝️Methodology
+
+## Problem statement
+
+As there is no test set, this task will be specified as unsupervised ML algorithm.
+
+# 👷Implementation
