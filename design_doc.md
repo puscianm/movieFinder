@@ -7,7 +7,7 @@ In this document we summarize how we plan to execute movieFinder project.
 # ⚡Motivation
 
 # 🧮Succes metrics
-
+We will measure succes as $S = \frac{\text{liked games}}{\text{total movies shown}}$
 
 
 # 🚧Requirements & Constraints
