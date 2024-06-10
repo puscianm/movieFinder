@@ -41,3 +41,14 @@ For now we plan to put Docker file on AWS EC2 containing
 * postgres database
 * python backend
 * django/flask app
+
+## Phases
+* Engine - Phase I
+* Web app + Docker image - Phase II
+* AWS - Phase III
+
+
+## Deadlines
+* 31.07.2024 - Deadline for Phase I
+* 21.08.2024 - Deadline for Phase II
+* 31.08.2024 - Deadline for Phase III
