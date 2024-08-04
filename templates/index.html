@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football Match Scheduler</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            text-align: center;
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            margin-bottom: 1rem;
+        }
+        #matchInfo {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+        button {
+            font-size: 1rem;
+            padding: 0.5rem 1rem;
+            margin: 0 0.5rem;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Football Match Scheduler</h1>
+        <div id="matchInfo">Click "Next Match" to get a random match</div>
+        <button onclick="getRandomMatch()">Next Match</button>
+        <button onclick="respond('YES')">YES</button>
+        <button onclick="respond('NO')">NO</button>
+    </div>
+
+    <script>
+        function getRandomMatch() {
+            fetch('/get_random_match')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        document.getElementById('matchInfo').textContent = data.error;
+                    } else {
+                        document.getElementById('matchInfo').textContent = 
+                            `${data.time}: ${data.host} vs ${data.guest}`;
+                    }
+                });
+        }
+
+        function respond(answer) {
+            alert(`You responded: ${answer}`);
+            getRandomMatch();
+        }
+    </script>
+</body>
+</html>
