@@ -38,9 +38,11 @@ We will use mainly to API's
 
 # 👷Implementation
 For now we plan to put Docker file on AWS EC2 containing
-* postgres database
 * python backend
 * django/flask app
+
+## Important architectural choices
+Do we use sql database inside docker container or SQL database hosted on cloud.
 
 ## Phases
 * Engine - Phase I
